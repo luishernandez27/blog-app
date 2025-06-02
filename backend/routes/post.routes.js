@@ -1,19 +1,15 @@
+// backend/routes/post.routes.js
 const express = require('express');
 const router = express.Router();
-const verifyToken = require('../middleware/verifyToken');
-const Post = require('../models/Post');
+const Post = require('../models/Post'); // Asegúrate de que existe
 
-router.post('/', verifyToken, async (req, res) => {
+// GET /api/posts
+router.get('/', async (req, res) => {
   try {
-    const newPost = new Post({
-      title: req.body.title,
-      content: req.body.content,
-      author: req.user.id  // ← debe existir en el payload del token
-    });
-    const savedPost = await newPost.save();
-    res.status(201).json(savedPost);
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.json(posts);
   } catch (err) {
-    res.status(500).json({ message: 'Error al guardar el post' });
+    res.status(500).json({ message: 'Error al obtener posts' });
   }
 });
 
